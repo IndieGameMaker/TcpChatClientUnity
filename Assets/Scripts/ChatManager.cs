@@ -25,11 +25,10 @@ public class ChatManager : MonoBehaviour
 
     #region 유니티 콜백 메서드
 
-    private async Task Awake()
+    private void Awake()
     {
         // TCP 클라이언 인스턴스 생성
         _tcpChatClient = new TcpChatClient(_serverIp, _serverPort);
-        await _tcpChatClient.ConnectServerAsync();
     }
 
     private void OnDestroy()
@@ -55,13 +54,38 @@ public class ChatManager : MonoBehaviour
         _sendButton.onClick.AddListener(OnSendButtonClicked);
         _messageInput.onSubmit.AddListener(OnMessageSummit);
     }
+    
+    private void OnDisable()
+    {
+        // TCP 클라이언트 이벤트 콜백 연결
+        _tcpChatClient.Connected -= OnConnected;
+        _tcpChatClient.Disconnected -= OnDisconnected;
+        _tcpChatClient.MessageReceived -= OnMessageReceived;
+        _tcpChatClient.ErrorReceived -= OnErrorReceived;
+        
+        // UI 이벤트 연결
+        _connectButton.onClick.RemoveListener(OnConnectButtonClicked);
+        _sendButton.onClick.RemoveListener(OnSendButtonClicked);
+        _messageInput.onSubmit.RemoveListener(OnMessageSummit);
+    }
     #endregion
 
 
     #region UI 이벤트 핸들러
-    private void OnConnectButtonClicked()
+    private async void OnConnectButtonClicked()
     {
+        _nickName = _nickNameInput.text;
+        if (string.IsNullOrEmpty(_nickName))
+        {
+            Debug.Log("닉네임을 입력하세요.");
+            return;
+        }
         
+        bool success = await _tcpChatClient.ConnectServerAsync();
+        if (success)
+        {
+            // TODO: 서버에 닉네임 전송
+        }
     }
 
     private void OnSendButtonClicked()
@@ -69,7 +93,7 @@ public class ChatManager : MonoBehaviour
         
     }
 
-    private void OnMessageSummit(string arg0)
+    private void OnMessageSummit(string _)
     {
         
     }
