@@ -94,6 +94,9 @@ public class ChatManager : MonoBehaviour
         // CHAT:닉네임:채팅메시지
         string message = $"CHAT:{_nickName}:{_messageInput.text}";
         await _tcpChatClient.SendMessageAsync(message);
+
+        _messageInput.text = "";
+        _messageInput.ActivateInputField();
     }
 
     // Enter 키 눌렀을 때
@@ -103,25 +106,31 @@ public class ChatManager : MonoBehaviour
     }
     #endregion
 
+    // 메시지 목록에 텍스트 추가
+    private void AddChatText(string message)
+    {
+        _chatText.text += message;
+    }
+    
     #region 이벤트 핸들러
     private void OnConnected()
     {
-        
+        AddChatText("[시스템] 서버에 연결되었습니다.");
     }
 
     private void OnDisconnected()
     {
-        
+        AddChatText("[시스템] 서버와 연결이 종료되었습니다.");
     }
 
-    private void OnMessageReceived(string obj)
+    private void OnMessageReceived(string message)
     {
-        
+        AddChatText(message);
     }
 
-    private void OnErrorReceived(string obj)
+    private void OnErrorReceived(string error)
     {
-        
+        AddChatText(error);
     }
 
     #endregion
