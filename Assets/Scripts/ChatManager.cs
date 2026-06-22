@@ -84,18 +84,22 @@ public class ChatManager : MonoBehaviour
         bool success = await _tcpChatClient.ConnectServerAsync();
         if (success)
         {
-            // TODO: 서버에 닉네임 전송
+            // 서버에 닉네임 전송 (NICK: 닉네임)
+            await _tcpChatClient.SendMessageAsync($"NICK: {_nickName}");
         }
     }
 
-    private void OnSendButtonClicked()
+    private async void OnSendButtonClicked()
     {
-        
+        // CHAT:닉네임:채팅메시지
+        string message = $"CHAT:{_nickName}:{_messageInput.text}";
+        await _tcpChatClient.SendMessageAsync(message);
     }
 
+    // Enter 키 눌렀을 때
     private void OnMessageSummit(string _)
     {
-        
+        OnSendButtonClicked();
     }
     #endregion
 
