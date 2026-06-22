@@ -20,6 +20,32 @@ public class TcpChatClient : IDisposable
     // 릴리즈 여부 변수
     private bool _isDisposed;
     
+    // Dispatcher Event 선언
+    public event Action Connected;
+    public event Action Disconnected;
+    public event Action<string> MessageReceived;
+    public event Action<string> ErrorReceived;
+    
+    // 생성자
+    public TcpChatClient(string serverIp, int serverPort)
+    {
+        _serverIp = serverIp;
+        _serverPort = serverPort;
+        _isConnected = false;
+        _isDisposed = false;
+    }
+
+    #region 서버 연결
+    #endregion
+    
+    #region 메시지 수신
+    #endregion
+    
+    #region 메시지 송신
+    #endregion
+    
+    
+    
     public void Dispose()
     {
         // TODO: 릴리즈 작업
