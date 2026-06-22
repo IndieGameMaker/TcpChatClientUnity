@@ -99,12 +99,14 @@ public class TcpChatClient : IDisposable
                     Debug.Log("서버와 연결이 종료되었습니다.");
                     _isConnected = false;
                     
-                    // TODO: 종료 이벤트 발생
+                    // 종료 이벤트 발생
+                    UnityMainThreadDispatcher.Instance.Enqueue(() => Disconnected?.Invoke());
                     break;
                 }
 
-                Debug.Log("메시지 수신:" + message);
-                // TODO: 메시지 수신 이벤트 발생
+                // Debug.Log("메시지 수신:" + message);
+                // 메시지 수신 이벤트 발생
+                UnityMainThreadDispatcher.Instance.Enqueue(() => MessageReceived?.Invoke(message));
             }
         }
         catch (OperationCanceledException)
@@ -123,8 +125,9 @@ public class TcpChatClient : IDisposable
     {
         if (!_isConnected || _writer == null)
         {
-            Debug.LogError("서버에 연결되지 않았습니다.");
-            // TODO: 에러 이벤트 발생
+            // Debug.LogError("서버에 연결되지 않았습니다.");
+            // 에러 이벤트 발생
+            UnityMainThreadDispatcher.Instance.Enqueue(() => ErrorReceived?.Invoke("서버에 연결되지 않았습니다."));
         }
 
         try
@@ -133,8 +136,9 @@ public class TcpChatClient : IDisposable
         }
         catch (Exception e)
         {
-            Debug.LogError("메시지 전송 실패: "+e.Message);
-            // TODO: 에러 이벤트 발생
+            // Debug.LogError("메시지 전송 실패: "+e.Message);
+            // 에러 이벤트 발생
+            UnityMainThreadDispatcher.Instance.Enqueue(() => ErrorReceived?.Invoke("메시지 전송 실패: "+e.Message));
             // 연결 종료
             Dispose();
         }
