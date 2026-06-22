@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading.Tasks;
+using UnityEngine;
 
 public class TcpChatClient : IDisposable
 {
@@ -36,6 +38,27 @@ public class TcpChatClient : IDisposable
     }
 
     #region 서버 연결
+
+    public async Task<bool> ConnectServerAsync()
+    {
+        if (_isConnected)
+        {
+            Debug.Log("이미 서버에 연결되어 있습니다.");
+            // TODO: 에러 이벤트 발생
+            return false;
+        }
+
+        try
+        {
+
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("서버 연결 실패:" + e.Message);
+            // TODO: 에러 이벤트 발생
+            return false;
+        }
+    }
     #endregion
     
     #region 메시지 수신
