@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -28,6 +29,9 @@ public class TcpChatClient : IDisposable
     public event Action Disconnected;
     public event Action<string> MessageReceived;
     public event Action<string> ErrorReceived;
+    
+    // 종료 토큰 선언
+    private CancellationTokenSource _cts = new CancellationTokenSource();
     
     // 생성자
     public TcpChatClient(string serverIp, int serverPort)
@@ -63,7 +67,9 @@ public class TcpChatClient : IDisposable
             
             // TODO: 서버 연결 이벤트 발생
             
-            // TODO: 수신 루프 시작(백그라운드 스레드 가동)
+            // 수신 루프 시작(백그라운드 스레드 가동)
+            _ = Task.Run( () => ReceiveMessageAsync(_cts.Token) );
+            
             return true;
         }
         catch (Exception e)
@@ -76,6 +82,37 @@ public class TcpChatClient : IDisposable
     #endregion
     
     #region 메시지 수신
+    public async Task ReceiveMessageAsync(CancellationToken token)
+    {
+        try
+        {
+            while (!token.IsCancellationRequested)
+            {
+                string message = await _reader.ReadLineAsync();
+
+                if (message == null)
+                {
+                    // 서버가 종료된 경우
+                    Debug.Log("서버와 연결이 종료되었습니다.");
+                    _isConnected = false;
+                    
+                    // TODO: 종료 이벤트 발생
+                    break;
+                }
+
+                Debug.Log("메시지 수신:" + message);
+                // TODO: 메시지 수신 이벤트 발생
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            Debug.Log("수신 작업 취소");
+        }
+        finally
+        {
+            Dispose();
+        }
+    }
     #endregion
     
     #region 메시지 송신

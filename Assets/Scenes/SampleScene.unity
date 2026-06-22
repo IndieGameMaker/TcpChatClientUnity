@@ -1774,7 +1774,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbb52210e0bb400ab663d920927b838b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChatManager
-  _serverIp: 127.0.0.1
+  _serverIp: 192.168.0.149
   _serverPort: 7777
   _nickNameInput: {fileID: 1523933241}
   _messageInput: {fileID: 728185583}
