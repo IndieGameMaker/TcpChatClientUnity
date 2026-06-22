@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -50,7 +51,19 @@ public class TcpChatClient : IDisposable
 
         try
         {
-
+            // TCP 소켓 초기화
+            _tcpClient = new TcpClient();
+            // 서버 접속
+            await _tcpClient.ConnectAsync(_serverIp, _serverPort);
+            // 스트림 초기화
+            _stream = _tcpClient.GetStream();
+            _reader = new StreamReader(_stream, new UTF8Encoding(false)); // BOM 사용하지 않음
+            _writer = new StreamWriter(_stream, new UTF8Encoding(false)) {AutoFlush = true};
+            _isConnected = true;
+            
+            // TODO: 서버 연결 이벤트 발생
+            
+            // TODO: 수신 루프 시작(백그라운드 스레드 가동)
         }
         catch (Exception e)
         {
