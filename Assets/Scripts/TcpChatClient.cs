@@ -79,6 +79,26 @@ public class TcpChatClient : IDisposable
     #endregion
     
     #region 메시지 송신
+    public async Task SendMessageAsync(string message)
+    {
+        if (!_isConnected || _writer == null)
+        {
+            Debug.LogError("서버에 연결되지 않았습니다.");
+            // TODO: 에러 이벤트 발생
+        }
+
+        try
+        {
+            await _writer.WriteLineAsync(message);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("메시지 전송 실패: "+e.Message);
+            // TODO: 에러 이벤트 발생
+            // 연결 종료
+            Dispose();
+        }
+    }
     #endregion
     
     
