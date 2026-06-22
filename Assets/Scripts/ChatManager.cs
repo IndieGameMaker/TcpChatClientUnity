@@ -109,7 +109,7 @@ public class ChatManager : MonoBehaviour
     // 메시지 목록에 텍스트 추가
     private void AddChatText(string message)
     {
-        _chatText.text += message;
+        _chatText.text += message + "\n";
     }
     
     #region 이벤트 핸들러

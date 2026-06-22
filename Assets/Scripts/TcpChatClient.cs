@@ -154,10 +154,15 @@ public class TcpChatClient : IDisposable
         _isDisposed = true;
         _isConnected = false;
         
+        _cts?.Cancel();
+        
         _reader?.Dispose();
         _writer?.Dispose();
         _stream?.Dispose();
         
         _tcpClient?.Dispose();
+        
+        _cts?.Dispose();
+        _cts = null;
     }
 }
