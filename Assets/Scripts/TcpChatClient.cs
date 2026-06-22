@@ -48,8 +48,9 @@ public class TcpChatClient : IDisposable
     {
         if (_isConnected)
         {
-            Debug.Log("이미 서버에 연결되어 있습니다.");
-            // TODO: 에러 이벤트 발생
+            // Debug.Log("이미 서버에 연결되어 있습니다.");
+            // 에러 이벤트 발생
+            UnityMainThreadDispatcher.Instance.Enqueue( () => ErrorReceived?.Invoke("이미 서버에 연결되어 있습니다."));
             return false;
         }
 
@@ -65,7 +66,8 @@ public class TcpChatClient : IDisposable
             _writer = new StreamWriter(_stream, new UTF8Encoding(false)) {AutoFlush = true};
             _isConnected = true;
             
-            // TODO: 서버 연결 이벤트 발생
+            // 서버 연결 이벤트 발생
+            UnityMainThreadDispatcher.Instance.Enqueue(() => Connected?.Invoke());
             
             // 수신 루프 시작(백그라운드 스레드 가동)
             _ = Task.Run( () => ReceiveMessageAsync(_cts.Token) );
@@ -74,8 +76,9 @@ public class TcpChatClient : IDisposable
         }
         catch (Exception e)
         {
-            Debug.LogError("서버 연결 실패:" + e.Message);
-            // TODO: 에러 이벤트 발생
+            // Debug.LogError("서버 연결 실패:" + e.Message);
+            // 에러 이벤트 발생
+            UnityMainThreadDispatcher.Instance.Enqueue(() => ErrorReceived?.Invoke("서버 연결 실패:" + e.Message));
             return false;
         }
     }
